@@ -16,20 +16,15 @@ allprojects {
     }
 }
 
-// extension to the buildscript (buildSrc)
-import de.nxg.kenneytolibgdxatlas.KenneyToLibGdxAtlasConverter
+task atlases(type:JavaExec) {
+    classpath file("${rootDir}/buildSrc/build/classes/java/main")
+    main = 'de.nxg.kenneytolibgdxatlas.KenneyToLibGdxAtlasConverter'
+    args 'core/src/main/resources'
+}
 
 project(':core') {
     dependencies {
         compile group: 'com.badlogicgames.gdx', name: 'gdx', version: rootProject.gdxVersion
-    }
-
-    task atlases {
-        doLast {
-            project.resources.each { path ->
-                new KenneyToLibGdxAtlasConverter(true, path as java.nio.file.Path).run()
-            }
-        }
     }
 }
 
@@ -42,4 +37,5 @@ project(':desktop') {
 
     apply plugin: 'application'
     mainClassName = 'imt.uvinfo.daleks.desktop.DaleksDesktop'
+    run.dependsOn atlases
 }
