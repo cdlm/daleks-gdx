@@ -4,13 +4,11 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL30;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -20,8 +18,8 @@ public class Daleks implements ApplicationListener {
     private SpriteBatch sprites;
     private ShapeRenderer shapes;
     private float elapsed;
-    private Sprite alien;
-    private Animation<TextureRegion> idle;
+    private Animation<TextureRegion> idle, walk;
+    private TextureAtlas textures;
 
     @Override
     public void create() {
@@ -35,16 +33,13 @@ public class Daleks implements ApplicationListener {
         sprites = new SpriteBatch();
         shapes = new ShapeRenderer();
 
-        Texture alienSpriteMap = new Texture(Gdx.files.internal("alienGreen.png"));
-        alien = new Sprite(alienSpriteMap,
-                           70, 92,
-                           66, 92);
-        idle = new Animation<>(0.5f, new Array<>(new TextureRegion[]{
-                new TextureRegion(alienSpriteMap, 70, 92, 66, 92),
-                new TextureRegion(alienSpriteMap, 135, 379, -66, 92),
-                new TextureRegion(alienSpriteMap, 70, 92, 66, 92),
-                new TextureRegion(alienSpriteMap, 69, 379, 66, 92),
-        }));
+        textures = new TextureAtlas(Gdx.files.internal("alienGreen.atlas"));
+        walk = new Animation<>(0.25f,
+                               textures.findRegion("alienGreen_walk1"),
+                               textures.findRegion("alienGreen_walk2"));
+        idle = new Animation<>(3.5f,
+                               textures.findRegion("alienGreen"),
+                               textures.findRegion("alienGreen_stand"));
     }
 
     @Override
@@ -61,13 +56,12 @@ public class Daleks implements ApplicationListener {
         shapes.rect(10, 10, 780, 580);
         shapes.end();
 
-        alien.setPosition(400 + 100 * (float) Math.cos(elapsed), 300 + 25 * (float) Math.sin(elapsed));
-        TextureRegion currentAlien = idle.getKeyFrame(elapsed, true);
-
         sprites.setProjectionMatrix(viewport.getCamera().combined);
         sprites.begin();
-        alien.draw(sprites);
-        sprites.draw(currentAlien, 50, 50);
+        sprites.draw(walk.getKeyFrame(elapsed, true),
+                     400 + 100 * (float) Math.cos(elapsed),
+                     300 + 25 * (float) Math.sin(elapsed));
+        sprites.draw(idle.getKeyFrame(elapsed, true), 50, 50);
         sprites.end();
     }
 
