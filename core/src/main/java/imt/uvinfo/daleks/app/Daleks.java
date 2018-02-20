@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -37,9 +38,10 @@ public class Daleks implements ApplicationListener {
         walk = new Animation<>(0.25f,
                                textures.findRegion("alienGreen_walk1"),
                                textures.findRegion("alienGreen_walk2"));
-        idle = new Animation<>(3.5f,
-                               textures.findRegion("alienGreen"),
-                               textures.findRegion("alienGreen_stand"));
+        idle = new Animation<>(2f, new Array<>(new TextureRegion[]{
+                textures.findRegion("alienGreen"),
+                textures.findRegion("alienGreen_stand")
+        }), Animation.PlayMode.LOOP_RANDOM);
     }
 
     @Override

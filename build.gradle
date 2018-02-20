@@ -9,6 +9,10 @@ allprojects {
     apply plugin: 'java'
     repositories { jcenter() }
 
+    compileJava {
+        options.compilerArgs += ["-Xlint:unchecked"]
+    }
+
     apply plugin: 'idea'
     idea.module {
         downloadJavadoc = true
@@ -16,7 +20,7 @@ allprojects {
     }
 }
 
-task atlases(type:JavaExec) {
+task atlases(type: JavaExec) {
     classpath file("${rootDir}/buildSrc/build/classes/java/main")
     main = 'de.nxg.kenneytolibgdxatlas.KenneyToLibGdxAtlasConverter'
     args 'core/src/main/resources'
